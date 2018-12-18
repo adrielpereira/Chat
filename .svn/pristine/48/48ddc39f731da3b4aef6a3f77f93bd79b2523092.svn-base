@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <handlers>
+      <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModule" resourceType="Unspecified" />
+    </handlers>
+    <aspNetCore processPath=".\WebChatQJW.Core.exe" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" />
+  </system.webServer>
+</configuration>
+<!--ProjectGuid: E10B644F-2C9A-4E75-91B3-4F3718654D24-->

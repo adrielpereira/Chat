@@ -1,0 +1,66 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using WebChatQJW.Core.Data;
+using WebChatQJW.Core.Models;
+using WebChatQJW.Core.Repository.Interfaces;
+
+namespace WebChatQJW.Core.Repository.Entities
+{
+    public class RepositoryMessage : RepositoryBase<Message>, IRepositoryMessage
+    {
+        public RepositoryMessage(DataContext context) : base(context)
+        {
+        }
+
+        public IEnumerable<Message> FindMessagesByUser(long userId, long userTo, long companyId)
+        {
+            return DbContexto.Message
+                .Where(x =>
+                (x.From == userId && userTo == x.To)
+                || (x.From == userTo && userId == x.To)
+                && companyId == x.CompanyId
+                ).ToList();
+        }
+
+        public IEnumerable<Message> FindMessagesByUser(long userId, long userTo, long companyId, int skip, int take)
+        {
+            return DbContexto.Message
+                .Where(x =>
+                (x.From == userId && userTo == x.To)
+                || (x.From == userTo && userId == x.To)
+                && companyId == x.CompanyId
+                )
+                .OrderBy(x => x.Id)
+                .OrderByDescending(x => x.Create_at)
+                .Skip(skip).Take(take).ToList();
+        }
+
+        public IEnumerable<Message> UnreadMessages(long userId, long to, long companyId)
+        {
+            return DbContexto.Message.Where(
+                x => x.From == to
+                && x.To == userId
+                && x.CompanyId == companyId
+                && x.Status == 2
+                ).ToList();
+        }
+
+        public IEnumerable<Message> UnreadMessagesByUser(long userId, long companyId)
+        {
+            return DbContexto.Message.Where(
+                x => x.To == userId
+                && x.CompanyId == companyId
+                && x.Status == 2
+                ).ToList();
+        }
+
+        public IEnumerable<Message> UsersMessagesInBox(long userId, long companyId)
+        {
+            return DbContexto.Message.Where(x =>
+            (x.To == userId || x.From == userId)
+            && x.CompanyId == companyId)
+            .OrderByDescending(x => x.Create_at)
+            .ToList();
+        }
+    }
+}
